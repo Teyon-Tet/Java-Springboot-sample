@@ -14,7 +14,6 @@ import java.awt.*;
 
 @RestController
 @RequestMapping(path="/api", produces={MediaType.APPLICATION_JSON_VALUE})
-@AllArgsConstructor
 public class AccountsController {
 
     private IAccountsService iAccountsService;
