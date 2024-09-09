@@ -6,10 +6,14 @@ import com.eazybytes.loans.entity.Loans;
 import com.eazybytes.loans.mapper.LoansMapper;
 import com.eazybytes.loans.repository.LoansRepository;
 import com.eazybytes.loans.service.ILoansService;
+import lombok.AllArgsConstructor;
+import org.springframework.stereotype.Service;
 
 import java.util.Optional;
 import java.util.Random;
 
+@Service
+@AllArgsConstructor
 public class LoansServiceImpl implements ILoansService {
     private LoansRepository loansRepository;
 
@@ -41,6 +45,30 @@ public class LoansServiceImpl implements ILoansService {
         Loans loans = loansRepository.findByMobileNumber(mobileNumber).orElseThrow(
                 //() -> new ResourceNotFoundException("Loan","mobileNumber", mobileNumber)
         );
+        
         return LoansMapper.mapToLoansDto(loans, new LoansDto());
+    }
+
+    @Override
+    public boolean updateLoan(LoansDto loansDto) {
+        Loans loans = loansRepository.findByLoanNumber(loansDto.getLoanNumber()).orElseThrow(
+                //() -> new ResourceNotFoundException("Loan", "LoanNumber", loansDto.getLoanNumber())
+        );
+
+        LoansMapper.mapToLoans(loansDto, loans);
+        loansRepository.save(loans);
+
+        return true;
+    }
+
+    @Override
+    public boolean deleteLoan(String mobileNumber) {
+        Loans loans = loansRepository.findByMobileNumber(mobileNumber).orElseThrow(
+                //() -> new ResourceNotFoundException("Loan", "mobileNumber", mobileNumber)
+        );
+
+        loansRepository.deleteById(loans.getLoanId());
+
+        return true;
     }
 }
