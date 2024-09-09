@@ -1,7 +1,9 @@
 package com.eazybytes.loans.service.impl;
 
 import com.eazybytes.loans.constants.LoansConstants;
+import com.eazybytes.loans.dto.LoansDto;
 import com.eazybytes.loans.entity.Loans;
+import com.eazybytes.loans.mapper.LoansMapper;
 import com.eazybytes.loans.repository.LoansRepository;
 import com.eazybytes.loans.service.ILoansService;
 
@@ -20,6 +22,7 @@ public class LoansServiceImpl implements ILoansService {
         loansRepository.save(createNewLoan(mobileNumber));
     }
 
+
     private Loans createNewLoan(String mobileNumber) {
         Loans newLoan = new Loans();
         long randomLoanNumber = 100000000000L + new Random().nextInt(900000000);
@@ -30,5 +33,14 @@ public class LoansServiceImpl implements ILoansService {
         newLoan.setAmountPaid(0);
         newLoan.setOutstandingAmount(LoansConstants.NEW_LOAN_LIMIT);
         return newLoan;
+    }
+
+
+    @Override
+    public LoansDto fetchLoan(String mobileNumber) {
+        Loans loans = loansRepository.findByMobileNumber(mobileNumber).orElseThrow(
+                //() -> new ResourceNotFoundException("Loan","mobileNumber", mobileNumber)
+        );
+        return LoansMapper.mapToLoansDto(loans, new LoansDto());
     }
 }
