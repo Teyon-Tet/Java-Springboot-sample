@@ -3,6 +3,8 @@ package com.eazybytes.loans.service.impl;
 import com.eazybytes.loans.constants.LoansConstants;
 import com.eazybytes.loans.dto.LoansDto;
 import com.eazybytes.loans.entity.Loans;
+import com.eazybytes.loans.exception.LoanAlreadyExistsException;
+import com.eazybytes.loans.exception.ResourceNotFoundException;
 import com.eazybytes.loans.mapper.LoansMapper;
 import com.eazybytes.loans.repository.LoansRepository;
 import com.eazybytes.loans.service.ILoansService;
@@ -21,7 +23,7 @@ public class LoansServiceImpl implements ILoansService {
     public void createLoan(String mobileNumber) {
         Optional<Loans> optionalLoans = loansRepository.findByMobileNumber(mobileNumber);
         if(optionalLoans.isPresent()){
-            //throw new LoanAlreadyExistsException("Loan already registered with given mobileNumber "+mobileNumber);
+            throw new LoanAlreadyExistsException("Loan already registered with given mobileNumber "+mobileNumber);
         }
         loansRepository.save(createNewLoan(mobileNumber));
     }
@@ -43,7 +45,7 @@ public class LoansServiceImpl implements ILoansService {
     @Override
     public LoansDto fetchLoan(String mobileNumber) {
         Loans loans = loansRepository.findByMobileNumber(mobileNumber).orElseThrow(
-                //() -> new ResourceNotFoundException("Loan","mobileNumber", mobileNumber)
+                () -> new ResourceNotFoundException("Loan","mobileNumber", mobileNumber)
         );
 
         return LoansMapper.mapToLoansDto(loans, new LoansDto());
@@ -52,7 +54,7 @@ public class LoansServiceImpl implements ILoansService {
     @Override
     public boolean updateLoan(LoansDto loansDto) {
         Loans loans = loansRepository.findByLoanNumber(loansDto.getLoanNumber()).orElseThrow(
-                //() -> new ResourceNotFoundException("Loan", "LoanNumber", loansDto.getLoanNumber())
+                () -> new ResourceNotFoundException("Loan", "LoanNumber", loansDto.getLoanNumber())
         );
 
         LoansMapper.mapToLoans(loansDto, loans);
